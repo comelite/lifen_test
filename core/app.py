@@ -5,27 +5,35 @@ import json
 import re
 import sys
 from pathlib import Path
+from typing import Any, Optional
 
 
 class App:
+    """
+    App class
+    """
+
     def __init__(self) -> None:
         """
         Init app
         Args:
             None
-            
+
         Returns:
             None
         """
-        with open("data/detect_word.txt") as file:
+        self.path_detect_word = Path("data/utils/detect_word.txt")
+        with open(self.path_detect_word, encoding="utf-8") as file:
             self.list_detect_word = file.read().splitlines()
+        self.extracted_names: list[list[dict[str, Any] | None]] = []
+        self.docs: dict[str, Any] = {}
 
-    def sort_words(self, words: dict[str, any]) -> None:
+    def sort_words(self, words: dict[str, Any]) -> None:
         """
         Sort words by their y_min and x_min coordinates
         Args:
             words (dict[str, any]): Words
-            
+
         Returns:
             dict[str, any]: Sorted words
         """
@@ -34,41 +42,60 @@ class App:
             key=lambda word: (word["bbox"]["y_min"], word["bbox"]["x_min"]),
         )
 
-    def extract_names(self, document: dict[str, any]) -> None:
+    def check_if_name(
+        self, next_word_index: int, page: dict[str, Any], word: dict[str, Any]
+    ) -> Optional[dict[str, Any]]:
+        """
+        Check if the two next words are names
+        Args:
+            next_word_index (int): Index of the next word
+            page (dict[str, any]): Page
+            word (dict[str, any]): Word
+
+        Returns:
+            dict[str, any]: Names
+        """
+        first_name = ""
+        last_name = ""
+
+        next_word_index = page["words"].index(word) + 1
+        if next_word_index < len(page["words"]):
+            first_name = page["words"][next_word_index]["text"]
+            next_word_index += 1
+            if next_word_index < len(page["words"]):
+                text = page["words"][next_word_index]["text"]
+                if text.isupper() and re.match(r"^[A-Z]+$", text) and first_name != "":
+                    last_name = text
+                else:
+                    first_name = ""
+            else:
+                first_name = ""
+
+        if first_name != "" and last_name != "":
+            return {"first_name": first_name, "last_name": last_name}
+
+        return None
+
+    def extract_names(self, document: dict[str, Any]) -> None:
         """
         Extract names from document
         Args:
             document (dict[str, any]): Document
-        
+
         Returns:
             None
         """
         name_in_page = []
         names = []
 
-        first_name = ""
-        last_name = ""
         for page in document["pages"]:
             for word in page["words"]:
                 text = word["text"]
                 if text.lower() in self.list_detect_word:
-                    next_word_index = page["words"].index(word) + 1
-                    if next_word_index < len(page["words"]):
-                        first_name = page["words"][next_word_index]["text"]
-                        next_word_index += 1
-                        text = page["words"][next_word_index]["text"]
-                        if (
-                            text.isupper()
-                            and re.match(r"^[A-Z]+$", text)
-                            and first_name != ""
-                        ):
-                            last_name = text
-                        else:
-                            first_name = ""
-                if first_name != "" and last_name != "":
-                    names.append({"first_name": first_name, "last_name": last_name})
-                    first_name = ""
-                    last_name = ""
+                    name = self.check_if_name(page["words"].index(word), page, word)
+                    if name is not None:
+                        names.append(name)
+
             name_in_page.append(names.copy())
             names.clear()
 
@@ -79,12 +106,12 @@ class App:
         Load json file
         Args:
             path (Path): Path to json file
-            
+
         Returns:
             None
         """
         try:
-            with open(path) as json_file:
+            with open(path, encoding="utf-8") as json_file:
                 try:
                     self.docs = json.load(json_file)
                 except json.decoder.JSONDecodeError as err:
@@ -102,11 +129,11 @@ class App:
         Save json file
         Args:
             path (Path): Path to json file
-            
+
         Returns:
             None
         """
-        with open(path, "w") as json_file:
+        with open(path, "w", encoding="utf-8") as json_file:
             json.dump(self.extracted_names, json_file)
 
     def run(self, path_load: Path, path_save: Path) -> None:
@@ -115,7 +142,7 @@ class App:
         Args:
             path_load (Path): Path to json file
             path_save (Path): Path to json file
-            
+
         Returns:
             None
         """
