@@ -5,15 +5,19 @@ from pathlib import Path
 
 import typer
 
-from core import app
+from lifen_test.core import app
 
 app_typer = typer.Typer()
 
 
 @app_typer.command()
 def main(
-    path_load: str = typer.Option("data/docs.json", help="Path to json file"),
-    path_save: str = typer.Option("data/docs_save.json", help="Path to json file"),
+    path_load: str = typer.Option(
+        "lifen_test/data/save/docs.json", help="Path to json file"
+    ),
+    path_save: str = typer.Option(
+        "lifen_test/data/save/docs_save.json", help="Path to json file"
+    ),
 ):
     """
     Run the app

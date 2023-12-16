@@ -22,7 +22,7 @@ class App:
         Returns:
             None
         """
-        self.path_detect_word = Path("data/utils/detect_word.txt")
+        self.path_detect_word = Path("lifen_test/data/utils/detect_word.txt")
         with open(self.path_detect_word, encoding="utf-8") as file:
             self.list_detect_word = file.read().splitlines()
         self.extracted_names: list[list[dict[str, Any] | None]] = []
@@ -88,17 +88,16 @@ class App:
         name_in_page = []
         names = []
 
-        for page in document["pages"]:
+        for i, page in enumerate(document["pages"]):
             for word in page["words"]:
                 text = word["text"]
                 if text.lower() in self.list_detect_word:
                     name = self.check_if_name(page["words"].index(word), page, word)
                     if name is not None:
                         names.append(name)
-
-            name_in_page.append(names.copy())
+            dict_names = {"page_number": i, "names": names.copy()}
+            name_in_page.append(dict_names.copy())
             names.clear()
-
         self.extracted_names = name_in_page
 
     def load(self, path: Path) -> None:
