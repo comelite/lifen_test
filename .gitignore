@@ -161,4 +161,4 @@ cython_debug/
 
 lifen_test/data/save/*
 !lifen_test/data/save/.gitkeep
-lifen_test_env/
+!lifen_test/data/save/docs.json
