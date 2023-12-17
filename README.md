@@ -5,21 +5,25 @@ This project is a test for Lifen. It is a command line tool that allows you to r
 ## Table of Contents
 
 - [Getting Started](#getting-started)
+      - [Prerequisites](#prerequisites)
 - [Usage](#usage)
     - [Functionality](#functionality)
         - [Usage](#usage)
         - [Arguments](#arguments)
 - [Linting and Type Checking](#linting-and-type-checking)
 - [Testing](#testing)
+- [Isort and Black](#isort-and-black)
+- [Next Steps](#next-steps)
 
 ## Getting Started
 
-Provide instructions on how to set up the project locally. Include any prerequisites, installation steps, and configuration details.
+### Prerequisites
 
 ```bash
-# Example installation steps
 git clone https://github.com/comelite/lifen_test.git
 cd lifen_test
+python -m venv .venv
+.venv/bin/activate
 pip install poetry
 poetry install
 ```
@@ -66,7 +70,6 @@ All the results are saved in a json file in the format:
 #### Usage
 
 ```bash
-# Example usage
 poetry run python lifen_test/__main__.py --path-load <path_to_load> --path-save <path_to_save>
 ```
 
@@ -81,9 +84,27 @@ poetry run python lifen_test/__main__.py --path-load <path_to_load> --path-save 
 
 The project uses [pylint](https://www.pylint.org/) for linting and [mypy](http://mypy-lang.org/) for type checking.
 
+```bash
+poetry run pylint ./lifen_test
+poetry run mypy ./lifen_test
+```
+
 ## Testing
 
 The project uses [pytest](https://docs.pytest.org/en/latest/) for testing.
+
+```bash
+poetry run pytest ./tests/test.py
+```
+
+## Isort and Black
+
+The project uses [isort](https://pycqa.github.io/isort/) and [black](https://github.com/psf/black) for formatting.
+
+```bash
+poetry run isort ./lifen_test
+poetry run black ./lifen_test
+```
 
 ## Next Steps
 
@@ -91,3 +112,5 @@ One idea is to improve sentence reconstruction. With my method, you can see that
 This can be done by taking into account, for example, both the average point of a word and its minimum values. Or by using the maximum values in addition.
 
 Another improvement could be to add more words to detect first and last names. Currently only 4 words are used for this purpose, but the list could be expanded.
+
+We could also improve the tests. Currently, only the main functions are tested, but we could also test the functions that are used in the main functions.

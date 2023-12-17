@@ -1,4 +1,6 @@
-import json
+"""
+Test module
+"""
 
 from lifen_test.core.app import App
 
@@ -97,6 +99,9 @@ test = {
 
 
 def test_app_sort_words():
+    """
+    Test sort_words method
+    """
     app = App()
     app.sort_words(test["pages"][0])
 
@@ -117,6 +122,9 @@ def test_app_sort_words():
 
 
 def test_app_extract_names():
+    """
+    Test extract_names method
+    """
     app = App()
     app.docs = test
     app.sort_words(app.docs["pages"][0])

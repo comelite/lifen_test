@@ -5,7 +5,7 @@ import json
 import re
 import sys
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, Optional, Sequence
 
 
 class App:
@@ -25,7 +25,7 @@ class App:
         self.path_detect_word = Path("lifen_test/data/utils/detect_word.txt")
         with open(self.path_detect_word, encoding="utf-8") as file:
             self.list_detect_word = file.read().splitlines()
-        self.extracted_names: list[list[dict[str, Any] | None]] = []
+        self.extracted_names: Sequence[dict[str, object] | None]
         self.docs: dict[str, Any] = {}
 
     def sort_words(self, words: dict[str, Any]) -> None:
@@ -98,7 +98,7 @@ class App:
             dict_names = {"page_number": i, "names": names.copy()}
             name_in_page.append(dict_names.copy())
             names.clear()
-        self.extracted_names = name_in_page
+        self.extracted_names = name_in_page.copy()
 
     def load(self, path: Path) -> None:
         """
