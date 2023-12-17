@@ -23,7 +23,7 @@ This project is a test for Lifen. It is a command line tool that allows you to r
 git clone https://github.com/comelite/lifen_test.git
 cd lifen_test
 python -m venv .venv
-.venv/bin/activate
+.venv/Scripts/activate
 pip install poetry
 poetry install
 ```
